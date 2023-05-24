@@ -1,3 +1,4 @@
+#!/usr/bin/env pybricks-microphone
 from pybricks.hubs import EV3Brick
 from pybricks.ev3devices import (Motor, TouchSensor, ColorSensor,
                                  InfraredSensor, UltrasonicSensor, GyroSensor)
@@ -6,28 +7,51 @@ from pybricks.tools import wait, StopWatch, DataLog
 from pybricks.robotics import DriveBase
 from pybricks.media.ev3dev import SoundFile, ImageFile
 from pybricks.iodevices import DCMotor
+
+#imports for camera and API functionality
 from pixy2 import Pixy2
+import json
+import urequests
+import utime
 
 # This program requires LEGO EV3 MicroPython v2.0 or higher.
 # Click "Open user guide" on the EV3 extension tab for more information.
 
+# URL for API call (Localhost for now, will be changed domain name when hosted)
+url = 'http://10.12.1.108:8888/api/location'  
 
-# Create your objects here.
+# Establish connection to EV3 Brick
 ev3 = EV3Brick()
-# motorA = DCMotor(Port.A)
-# button = TouchSensor(Port.S2)
+
+# Establish connection to Pixy2
 pixy2 = Pixy2(port=1, i2c_address=0x54)
+
+# Get Pixy2 frame resolution
 frame = pixy2.get_resolution()
-# Write your program here.
 
 print("W:", frame.width)
 print("H:", frame.height)
 
-# cords = x, y
+# define function to send data to API
+def sendData(x, y):
+    dataObj = {'X': x, 'Y': y}
+    json_data = json.dumps(dataObj).encode('utf-8')
+    response = urequests.post(url, data=json_data, headers={'Content-Type': 'application/json'})
+    response_data = response.text
+    print(response_data)
+
+# Set interval for data to be sent to API
+interval = 2.5
+
+# Set number of blocks to be detected
+numBlocks = 5
+
+# Main loop
 while True:
-    numBlocks = 7
+    # Get number of blocks and block data
     nr_blocks, blocks = pixy2.get_blocks(1, numBlocks)
 
+    # Format and output data to console and send data to API
     for i in range(nr_blocks):
         sig = blocks[i].sig
         x = blocks[i].x_center
@@ -35,18 +59,7 @@ while True:
         w = blocks[i].width
         h = blocks[i].height
         print("cords{}: {}, {}".format(i+1, x, y))
+        sendData(x, y)
 
-
-
-class pixyData():
-    json = {"hello world"}
-
-# print(pixy.get_version())
-# pixy.get_blocks()
-
-# while True:
-#     if button.pressed():
-#         motorA.dc(100)
-#     else:
-#         motorA.dc(0)
-# ev3.speaker.say("Hello, World!")
+    # Delay for set amount of seconds
+    utime.sleep(interval)
