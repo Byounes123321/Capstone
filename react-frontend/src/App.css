@@ -1,0 +1,35 @@
+.App {
+  text-align: center;
+}
+
+#header {
+  margin-top: 50px;
+  display: flex;
+  justify-content: center;
+}
+
+#map {
+  width: calc(316px * 2);
+  height: calc(208px * 2);
+  border: 1px solid red;
+  position: relative;
+  /* display: flex;
+  justify-content: center; */
+}
+
+#cityImage {
+  width: 100%;
+  height: 100%;
+}
+
+#car-1{
+  width:20px;
+  height:10px;
+  background-color: pink;
+  position: absolute;
+  top: 416px;
+  left: 632px;
+  /* top: calc(300px * 2); */
+  /* left: calc(150px * 2); */
+  /* z-index: 2; */
+}
