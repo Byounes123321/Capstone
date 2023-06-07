@@ -1,16 +1,15 @@
-import logo from './logo.svg';
-import './App.css';
-import Body from './components/Body';
+import logo from "./logo.svg";
+import "./App.css";
+import Body from "./components/Body";
 
 // Pixy camera dimensions
 // W:316
 // H:208
-//yo
 
 function App() {
   return (
     <div className="App">
-        <Body />      
+      <Body />
     </div>
   );
 }
