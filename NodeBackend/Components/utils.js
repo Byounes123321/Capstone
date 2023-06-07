@@ -1,3 +1,7 @@
+const connection = require("./DBConnect.js");
+const dotenv = require("dotenv");
+dotenv.config();
+
 // format date time
 function formatDateTime(date) {
   const year = date.getFullYear();
@@ -14,16 +18,56 @@ function formatDateTime(date) {
 
 //TODO: Identify each car using a "Parking space"
 function Config(data) {
-  switch (data) {
-    case { X: 240, Y: 120 }:
-      data.Id = 1;
+  switch (JSON.stringify(data)) {
+    case JSON.stringify({ X: 240, Y: 120 }):
+      data.ID = 1;
+      break;
+    case JSON.stringify({ X: 480, Y: 240 }):
+      data.ID = 2;
+      break;
+    case JSON.stringify({ X: 360, Y: 480 }):
+      data.ID = 3;
+      break;
+    case JSON.stringify({ X: 120, Y: 360 }):
+      data.ID = 4;
+      break;
+    case JSON.stringify({ X: 240, Y: 480 }):
+      data.ID = 5;
+      break;
+    case JSON.stringify({ X: 480, Y: 360 }):
+      data.ID = 6;
+      break;
+    case JSON.stringify({ X: 360, Y: 120 }):
+      data.ID = 7;
+      break;
+    case JSON.stringify({ X: 120, Y: 240 }):
+      data.ID = 8;
+      break;
+    default:
+      data.ID = 0;
+      break;
   }
+
+  return data;
 }
 
 // Find the id of the car post config
-function findCarId(data) {
-  // if (data is within 6 blocks){
-  //   same id
+async function findCarId(data) {
+  return new Promise((resolve, reject) => {
+    const query = `SELECT car_id FROM ${process.env.TABLE}
+      WHERE x BETWEEN ${data.X - 6} AND ${data.X + 6}
+      AND y BETWEEN ${data.Y - 6} AND ${data.Y + 6}
+      LIMIT 1;`;
+
+    connection.query(query, function (error, results, fields) {
+      if (error) {
+        reject(error);
+      } else {
+        console.log("result: ", results);
+        resolve(results[0] ? results[0].car_id : null);
+      }
+    });
+  });
 }
 
-module.exports = formatDateTime;
+module.exports = { findCarId, formatDateTime, Config };

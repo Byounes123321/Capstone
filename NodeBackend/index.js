@@ -9,13 +9,11 @@ const connection = require("./Components/DBConnect.js");
 const { GetData, updateDb } = require("./Components/db.js");
 
 // Import Utility functions
-const formatDateTime = require("./Components/utils.js");
+const { formatDateTime, findCarId, Config } = require("./Components/utils.js");
 
 //TODO:
 //Determine the ids for each car
-//Only save database data if the object moves
 //Create config process
-//Create front end API
 
 //create express app and define port
 const app = express();
@@ -35,13 +33,28 @@ connection.connect(function (err) {
 //Location data API endpoint for receiving data from the Pixy2 camera
 
 //TODO: potentially add security to this endpoint
-app.post("/api/CamData", (req, res) => {
+app.post("/api/CamData", async (req, res) => {
   try {
-    const data = req.body;
+    //Get JSON data from camera
+    let data = req.body;
     // Log the data to the console
-    console.log("data:", data);
+    console.log("data1:", data);
     // Find the car id
-    // findCarId(data);
+    try {
+      //Get the car id by finding the last location closet to the current location
+      const carId = await findCarId(data);
+      console.log("Car ID:", carId);
+      if (carId == null) {
+        data = Config(data);
+      } else {
+        data.ID = carId;
+      }
+      // Continue with further processing if needed
+    } catch (error) {
+      // Handle any errors that occurred during the promise execution
+      console.error("An error occurred:", error);
+    }
+    console.log("data2:", data);
     // Create a timestamp for the data and update the database
     const today = new Date();
     const time = formatDateTime(today);

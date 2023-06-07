@@ -4,18 +4,27 @@ const dotenv = require("dotenv");
 dotenv.config();
 
 // Update the database with the new data
-function updateDb(data, time) {
-  //TODO: Dont update if the car is not moving
-  if (checkData(data)) {
-    //TODO: Always true
-    console.log("hi");
-    return 200;
-  }
-  let query = `INSERT INTO ${process.env.TABLE} (car_id, tracked_at, x, y) VALUES ('${data.ID}','${time}','${data.X}','${data.Y}' );`;
-  connection.query(query, function (error, results, fields) {
-    if (error) throw error;
-    // console.log("result: ", results);
-  });
+async function updateDb(data, time) {
+  // Check if the data is already in the database
+  checkData(data)
+    .then((result) => {
+      if (result) {
+        // If the vehicle does not move, do nothing
+        console.log("Data matches");
+      } else {
+        // if the vehicle has moved, update the database
+        let query = `INSERT INTO ${process.env.TABLE} (car_id, tracked_at, x, y) VALUES ('${data.ID}','${time}','${data.X}','${data.Y}' );`;
+        connection.query(query, function (error, results, fields) {
+          if (error) throw error;
+          console.log("Data inserted");
+          // console.log("result: ", results);
+        });
+      }
+    })
+    .catch((error) => {
+      // Handle any errors that occurred during the promise execution
+      console.error("An error occurred:", error);
+    });
 }
 async function GetData() {
   return new Promise((resolve, reject) => {
@@ -59,7 +68,8 @@ async function checkData(data) {
         // console.log("results:", results);
         if (results.length > 0) {
           const res = results[0];
-          if (res.x === data.X && res.y === data.Y) {
+          if (res.x == data.X && res.y == data.Y) {
+            //TODO: Check if data is close to the same location because the image moves slightly
             resolve(true);
           } else {
             resolve(false);
@@ -69,6 +79,8 @@ async function checkData(data) {
         }
       }
     });
+  }).catch((error) => {
+    console.error("An error occurred:", error);
   });
 }
 
