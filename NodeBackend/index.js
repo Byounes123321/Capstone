@@ -6,7 +6,7 @@ const bodyParser = require("body-parser");
 const connection = require("./Components/DBConnect.js");
 
 // Import Database functions
-const updateDb = require("./Components/db.js");
+const { GetData, updateDb } = require("./Components/db.js");
 
 // Import Utility functions
 const formatDateTime = require("./Components/utils.js");
@@ -35,11 +35,11 @@ connection.connect(function (err) {
 //Location data API endpoint for receiving data from the Pixy2 camera
 
 //TODO: potentially add security to this endpoint
-app.post("/api/location", (req, res) => {
+app.post("/api/CamData", (req, res) => {
   try {
     const data = req.body;
     // Log the data to the console
-    console.log(data);
+    console.log("data:", data);
     // Find the car id
     // findCarId(data);
     // Create a timestamp for the data and update the database
@@ -53,7 +53,21 @@ app.post("/api/location", (req, res) => {
     res.sendStatus(500);
   }
 });
-
+app.get("/api/location", async (req, res) => {
+  try {
+    //get the location data from the database
+    const data = await GetData();
+    //send the data to the client
+    console.log("data:", data);
+    res.send(data);
+  } catch (error) {
+    console.log("An error occurred:", error);
+    res.sendStatus(500);
+  }
+});
+app.get("/", (req, res) => {
+  res.send("Hello World");
+});
 //set up server listening
 app.listen(port, () => {
   console.log(`Listening on http://localhost:${port}`);
