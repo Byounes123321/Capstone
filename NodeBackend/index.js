@@ -6,14 +6,13 @@ const bodyParser = require("body-parser");
 const connection = require("./Components/DBConnect.js");
 
 // Import Database functions
-const { GetData, updateDb } = require("./Components/db.js");
+const { GetData, updateDb, GetPastData } = require("./Components/db.js");
 
 // Import Utility functions
 const { formatDateTime, findCarId, Config } = require("./Components/utils.js");
 
 //TODO:
-//Determine the ids for each car
-//Create config process
+// Add the ability to get past locations
 
 //create express app and define port
 const app = express();
@@ -66,10 +65,19 @@ app.post("/api/CamData", async (req, res) => {
     res.sendStatus(500);
   }
 });
-app.get("/api/location", async (req, res) => {
+// pass dateTime through the url
+app.get("/api/location/:datetime", async (req, res) => {
   try {
-    //get the location data from the database
-    const data = await GetData();
+    //get the date time from the url
+    const datetime = req.params.datetime;
+    // if the date time is null then get data, if not then get data from the date time
+    if (datetime == null) {
+      //get the location data from the database
+      const data = await GetData();
+    } else {
+      //get the location data from the database from the date time
+      const data = await GetPastData(datetime);
+    }
     //send the data to the client
     console.log("data:", data);
     res.send(data);
