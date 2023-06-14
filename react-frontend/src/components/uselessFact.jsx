@@ -2,9 +2,12 @@ import {useState, useEffect} from "react";
 
 
 export default function UselessFact() {
-    
+
+
     const [randomFact, setRandomFact] = useState("");
     const [factSource, setFactSource] = useState("");
+
+    
 
     useEffect(() => {
         const getFact = async () => {
