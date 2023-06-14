@@ -1,5 +1,5 @@
 .App {
-  text-align: center;
+  /* text-align: center; */
 }
 
 #header {
@@ -24,12 +24,33 @@
 
 #car-1{
   width:20px;
-  height:10px;
+  height:20px;
   background-color: pink;
   position: absolute;
-  top: 416px;
-  left: 632px;
+  /* top: 100px;
+  left: 100px; */
+  /* top: 416px;
+  left: 632px; */
   /* top: calc(300px * 2); */
   /* left: calc(150px * 2); */
   /* z-index: 2; */
+}
+
+#car-2{
+  width:20px;
+  height:20px;
+  background-color: red;
+  position: absolute;
+  /* top: 100px;
+  left: 100px; */
+  /* top: 416px;
+  left: 632px; */
+  /* top: calc(300px * 2); */
+  /* left: calc(150px * 2); */
+  /* z-index: 2; */
+}
+
+.carLabel {
+  margin-top: -1px;
+  margin-left: 5px;
 }
