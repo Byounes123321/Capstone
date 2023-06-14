@@ -56,8 +56,6 @@ while True:
         sig = blocks[i].sig
         x = blocks[i].x_center
         y = blocks[i].y_center
-        w = blocks[i].width
-        h = blocks[i].height
         print("cords{}: {}, {}".format(i+1, x, y))
         sendData(x, y)
 

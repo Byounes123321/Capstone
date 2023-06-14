@@ -66,18 +66,23 @@ app.post("/api/CamData", async (req, res) => {
   }
 });
 // pass dateTime through the url
-app.get("/api/location/:datetime", async (req, res) => {
+app.get("/api/location/:datetime?", async (req, res) => {
   try {
     //get the date time from the url
-    const datetime = req.params.datetime;
+    const date = req.params.datetime;
+    console.log("date:", date);
     // if the date time is null then get data, if not then get data from the date time
-    if (datetime == null) {
+    var data; //declare data variable
+    if (date == null) {
       //get the location data from the database
-      const data = await GetData();
+      data = await GetData();
     } else {
       //get the location data from the database from the date time
-      const data = await GetPastData(datetime);
+      const datetime = formatDateTime(new Date(date));
+      console.log("datetime:", datetime);
+      data = await GetPastData(datetime);
     }
+
     //send the data to the client
     console.log("data:", data);
     res.send(data);

@@ -36,7 +36,8 @@ async function GetData() {
         FROM ${process.env.TABLE}
         GROUP BY car_id
       ) m
-      ON t.car_id = m.car_id AND t.tracked_at = m.max_tracked_at;`;
+      ON t.car_id = m.car_id AND t.tracked_at = m.max_tracked_at
+      ORDER BY car_id;`;
 
     connection.query(query, function (error, results, fields) {
       if (error) {
@@ -59,7 +60,7 @@ async function GetPastData(datetime) {
         GROUP BY car_id
       ) m
       ON t.car_id = m.car_id AND t.tracked_at = m.max_tracked_at
-      WHERE t.tracked_at < ${datetime};`;
+      WHERE t.tracked_at < '${datetime}';`;
 
     connection.query(query, function (error, results, fields) {
       if (error) {
@@ -72,7 +73,7 @@ async function GetPastData(datetime) {
   });
 }
 //get the location data from the database
-const data = await GetData();
+// const data = await GetData();
 async function checkData(data) {
   return new Promise((resolve, reject) => {
     const query = `
