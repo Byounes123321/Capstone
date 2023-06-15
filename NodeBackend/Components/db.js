@@ -43,7 +43,15 @@ async function GetData() {
       if (error) {
         reject(error);
       } else {
-        // console.log("result:", results);
+        console.log("result from DB:", results);
+        // const timestamp = results[0].tracked_at;
+        // const convertedTimestamp = new Date(timestamp).toLocaleString("en-US", {
+        //   timeZone: "America/Toronto",
+        // });
+        // console.log(results[0].tracked_at);
+        // results[0].tracked_at = convertedTimestamp;
+        // console.log(results[0].tracked_at);
+
         resolve(results);
       }
     });
