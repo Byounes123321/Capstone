@@ -1,4 +1,4 @@
-#!/usr/bin/env pybricks-microphone
+#!/usr/bin/env pybricks-micropython
 from pybricks.hubs import EV3Brick
 from pybricks.ev3devices import (Motor, TouchSensor, ColorSensor,
                                  InfraredSensor, UltrasonicSensor, GyroSensor)
@@ -34,6 +34,7 @@ print("H:", frame.height)
 
 # define function to send data to API
 def sendData(x, y):
+    # print("Sending data to API")
     dataObj = {'X': x, 'Y': y}
     json_data = json.dumps(dataObj).encode('utf-8')
     response = urequests.post(url, data=json_data, headers={'Content-Type': 'application/json'})
@@ -41,7 +42,7 @@ def sendData(x, y):
     print(response_data)
 
 # Set interval for data to be sent to API
-interval = 2.5
+interval = .5
 
 # Set number of blocks to be detected
 numBlocks = 5
@@ -49,7 +50,14 @@ numBlocks = 5
 # Main loop
 while True:
     # Get number of blocks and block data
-    nr_blocks, blocks = pixy2.get_blocks(1, numBlocks)
+    try:
+        nr_blocks, blocks = pixy2.get_blocks(1, numBlocks)
+        # Rest of your code here
+    except OSError as e:
+        # Handle the specific exception
+        print("An error occurred during get_blocks():", e)
+        # Perform any necessary cleanup or fallback actions
+
 
     # Format and output data to console and send data to API
     for i in range(nr_blocks):
@@ -58,6 +66,7 @@ while True:
         y = blocks[i].y_center
         print("cords{}: {}, {}".format(i+1, x, y))
         sendData(x, y)
+            
 
     # Delay for set amount of seconds
     utime.sleep(interval)
