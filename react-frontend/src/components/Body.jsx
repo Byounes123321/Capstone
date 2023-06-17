@@ -6,7 +6,6 @@ export default function Body() {
         <div id="header">
             <CarMap />
             
-            <UselessFact />
         </div>
         
     )
