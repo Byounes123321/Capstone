@@ -58,6 +58,7 @@ app.post("/api/CamData", async (req, res) => {
     // Create a timestamp for the data and update the database
     const today = new Date();
     const time = formatDateTime(today);
+    // if (data.ID == 0) return;
     updateDb(data, time);
     // Send a response to the client
     res.sendStatus(200);
@@ -66,6 +67,7 @@ app.post("/api/CamData", async (req, res) => {
     res.sendStatus(500);
   }
 });
+
 app.get("/api/location", async (req, res) => {
   try {
     //get the location data from the database

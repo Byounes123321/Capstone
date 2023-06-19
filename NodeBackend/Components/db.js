@@ -6,6 +6,10 @@ dotenv.config();
 // Update the database with the new data
 async function updateDb(data, time) {
   // Check if the data is already in the database
+  if (data.ID == 0) {
+    console.log("No car id found");
+    return;
+  }
   checkData(data)
     .then((result) => {
       if (result) {
@@ -42,7 +46,7 @@ async function GetData() {
       if (error) {
         reject(error);
       } else {
-        // console.log("result:", results);
+        console.log("result:", results);
         resolve(results);
       }
     });
@@ -68,7 +72,12 @@ async function checkData(data) {
         // console.log("results:", results);
         if (results.length > 0) {
           const res = results[0];
-          if (res.x == data.X && res.y == data.Y) {
+          if (
+            res.x < data.X + 5 &&
+            res.x > data.X - 5 &&
+            res.y < data.Y + 5 &&
+            res.y > data.Y - 5
+          ) {
             //TODO: Check if data is close to the same location because the image moves slightly
             resolve(true);
           } else {
