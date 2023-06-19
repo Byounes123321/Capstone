@@ -6,6 +6,10 @@ dotenv.config();
 // Update the database with the new data
 async function updateDb(data, time) {
   // Check if the data is already in the database
+  if (data.ID == 0) {
+    console.log("No car id found");
+    return;
+  }
   checkData(data)
     .then((result) => {
       if (result) {
@@ -36,52 +40,18 @@ async function GetData() {
         FROM ${process.env.TABLE}
         GROUP BY car_id
       ) m
-      ON t.car_id = m.car_id AND t.tracked_at = m.max_tracked_at
-      ORDER BY car_id;`;
+      ON t.car_id = m.car_id AND t.tracked_at = m.max_tracked_at;`;
 
     connection.query(query, function (error, results, fields) {
       if (error) {
         reject(error);
       } else {
-        console.log("result from DB:", results);
-        // const timestamp = results[0].tracked_at;
-        // const convertedTimestamp = new Date(timestamp).toLocaleString("en-US", {
-        //   timeZone: "America/Toronto",
-        // });
-        // console.log(results[0].tracked_at);
-        // results[0].tracked_at = convertedTimestamp;
-        // console.log(results[0].tracked_at);
-
+        console.log("result:", results);
         resolve(results);
       }
     });
   });
 }
-async function GetPastData(datetime) {
-  return new Promise((resolve, reject) => {
-    let query = `
-      SELECT t.car_id, t.tracked_at, t.x, t.y
-      FROM ${process.env.TABLE} t
-      INNER JOIN (
-        SELECT car_id, MAX(tracked_at) AS max_tracked_at
-        FROM ${process.env.TABLE}
-        GROUP BY car_id
-      ) m
-      ON t.car_id = m.car_id AND t.tracked_at = m.max_tracked_at
-      WHERE t.tracked_at < '${datetime}';`;
-
-    connection.query(query, function (error, results, fields) {
-      if (error) {
-        reject(error);
-      } else {
-        // console.log("result:", results);
-        resolve(results);
-      }
-    });
-  });
-}
-//get the location data from the database
-// const data = await GetData();
 async function checkData(data) {
   return new Promise((resolve, reject) => {
     const query = `
@@ -102,7 +72,12 @@ async function checkData(data) {
         // console.log("results:", results);
         if (results.length > 0) {
           const res = results[0];
-          if (res.x == data.X && res.y == data.Y) {
+          if (
+            res.x < data.X + 5 &&
+            res.x > data.X - 5 &&
+            res.y < data.Y + 5 &&
+            res.y > data.Y - 5
+          ) {
             //TODO: Check if data is close to the same location because the image moves slightly
             resolve(true);
           } else {
@@ -118,4 +93,4 @@ async function checkData(data) {
   });
 }
 
-module.exports = { updateDb, GetData, GetPastData };
+module.exports = { updateDb, GetData };
