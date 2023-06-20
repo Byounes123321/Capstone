@@ -11,10 +11,6 @@ const { GetData, updateDb, GetPastData } = require("./Components/db.js");
 // Import Utility functions
 const { formatDateTime, findCarId, Config } = require("./Components/utils.js");
 
-//TODO:
-//Determine the ids for each car
-//Create config process
-
 //create express app and define port
 const app = express();
 app.use(bodyParser.json());
@@ -23,7 +19,6 @@ const port = process.env.PORT || 8888;
 
 //Allow for CORS
 const cors = require("cors");
-
 app.use(cors());
 
 //connect to database
@@ -63,7 +58,6 @@ app.post("/api/CamData", async (req, res) => {
     // Create a timestamp for the data and update the database
     const today = new Date();
     const time = formatDateTime(today);
-    // if (data.ID == 0) return;
     updateDb(data, time);
     // Send a response to the client
     res.sendStatus(200);
@@ -95,9 +89,7 @@ app.get("/api/location/:datetime?", async (req, res) => {
     res.sendStatus(500);
   }
 });
-// app.get("/", (req, res) => {
-//   res.send("Hello World");
-// });
+
 //set up server listening
 app.listen(port, () => {
   console.log(`Listening on http://localhost:${port}`);
