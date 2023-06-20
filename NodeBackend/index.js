@@ -6,7 +6,7 @@ const bodyParser = require("body-parser");
 const connection = require("./Components/DBConnect.js");
 
 // Import Database functions
-const { GetData, updateDb } = require("./Components/db.js");
+const { GetData, updateDb, GetPastData } = require("./Components/db.js");
 
 // Import Utility functions
 const { formatDateTime, findCarId, Config } = require("./Components/utils.js");
@@ -20,6 +20,11 @@ const app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 const port = process.env.PORT || 8888;
+
+//Allow for CORS
+const cors = require("cors");
+
+app.use(cors());
 
 //connect to database
 connection.connect(function (err) {
@@ -68,21 +73,31 @@ app.post("/api/CamData", async (req, res) => {
   }
 });
 
-app.get("/api/location", async (req, res) => {
+app.get("/api/location/:datetime?", async (req, res) => {
   try {
     //get the location data from the database
-    const data = await GetData();
+    let data = await GetData();
+    //get date from the request
+    const date = req.params.datetime;
+    if (date) {
+      console.log("date:", date);
+      const datetime = formatDateTime(new Date(date));
+      console.log("datetime:", datetime);
+      data = await GetPastData(datetime);
+    }
     //send the data to the client
     console.log("data:", data);
+    res.header("Access-Control-Allow-Origin", "*");
     res.send(data);
   } catch (error) {
     console.log("An error occurred:", error);
+    res.header("Access-Control-Allow-Origin", "*");
     res.sendStatus(500);
   }
 });
-app.get("/", (req, res) => {
-  res.send("Hello World");
-});
+// app.get("/", (req, res) => {
+//   res.send("Hello World");
+// });
 //set up server listening
 app.listen(port, () => {
   console.log(`Listening on http://localhost:${port}`);
