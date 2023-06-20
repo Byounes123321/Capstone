@@ -18,7 +18,7 @@ import utime
 # Click "Open user guide" on the EV3 extension tab for more information.
 
 # URL for API call (Localhost for now, will be changed domain name when hosted)
-url = 'http://10.12.1.108:8888/api/camdata'  
+url = 'gps.bassilyounes/api/camdata'  
 
 # Establish connection to EV3 Brick
 ev3 = EV3Brick()
